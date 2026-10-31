@@ -1,0 +1,121 @@
+student_id,gender,program,test_number,study_hours,sleep_hours,attendance_pct,score
+S01,Male,Computer Science,1,11.0,7.8,64,59
+S01,Male,Computer Science,2,10.9,8.8,64,63
+S01,Male,Computer Science,3,11.9,8.5,64,69
+S01,Male,Computer Science,4,8.6,8.2,64,59
+S02,Female,Engineering,1,13.1,6.6,62,69
+S02,Female,Engineering,2,14.6,5.6,62,67
+S02,Female,Engineering,3,11.9,5.9,62,71
+S02,Female,Engineering,4,15.8,6.2,62,77
+S03,Female,Engineering,1,7.6,7.2,77,62
+S03,Female,Engineering,2,4.8,7.5,77,53
+S03,Female,Engineering,3,4.4,7.4,77,59
+S03,Female,Engineering,4,4.2,7.2,77,51
+S04,Female,Computer Science,1,9.9,7.0,67,50
+S04,Female,Computer Science,2,14.2,6.7,67,78
+S04,Female,Computer Science,3,13.6,5.5,67,71
+S04,Female,Computer Science,4,14.7,5.6,67,79
+S05,Female,Computer Science,1,18.2,5.5,62,73
+S05,Female,Computer Science,2,21.2,5.7,62,88
+S05,Female,Computer Science,3,20.5,5.6,62,88
+S05,Female,Computer Science,4,18.7,5.7,62,88
+S06,Male,Computer Science,1,16.5,7.0,76,83
+S06,Male,Computer Science,2,16.9,7.2,76,85
+S06,Male,Computer Science,3,14.4,7.4,76,73
+S06,Male,Computer Science,4,12.5,7.0,76,70
+S07,Female,Computer Science,1,7.6,7.9,60,54
+S07,Female,Computer Science,2,6.2,8.0,60,47
+S07,Female,Computer Science,3,6.5,7.7,60,61
+S07,Female,Computer Science,4,9.9,7.0,60,61
+S08,Male,Engineering,1,15.2,5.9,76,70
+S08,Male,Engineering,2,16.0,6.0,76,77
+S08,Male,Engineering,3,17.7,6.1,76,80
+S08,Male,Engineering,4,17.6,5.9,76,84
+S09,Male,Engineering,1,3.5,7.9,66,50
+S09,Male,Engineering,2,5.1,8.0,66,60
+S09,Male,Engineering,3,2.3,7.4,66,46
+S09,Male,Engineering,4,7.4,8.0,66,55
+S10,Female,Engineering,1,4.1,7.5,98,50
+S10,Female,Engineering,2,5.4,6.5,98,53
+S10,Female,Engineering,3,7.6,7.1,98,61
+S10,Female,Engineering,4,8.2,7.9,98,74
+S11,Male,Engineering,1,3.7,8.2,94,39
+S11,Male,Engineering,2,8.3,7.7,94,56
+S11,Male,Engineering,3,8.8,8.1,94,64
+S11,Male,Engineering,4,9.3,8.3,94,61
+S12,Male,Engineering,1,17.7,5.1,98,82
+S12,Male,Engineering,2,20.0,5.0,98,96
+S12,Male,Engineering,3,22.0,4.4,98,85
+S12,Male,Engineering,4,20.5,4.9,98,89
+S13,Female,Business,1,13.8,7.1,67,64
+S13,Female,Business,2,17.4,6.0,67,74
+S13,Female,Business,3,17.7,7.6,67,77
+S13,Female,Business,4,17.7,7.2,67,90
+S14,Female,Engineering,1,15.4,8.3,99,73
+S14,Female,Engineering,2,16.5,9.5,99,82
+S14,Female,Engineering,3,16.3,8.2,99,87
+S14,Female,Engineering,4,17.3,9.1,99,77
+S15,Female,Computer Science,1,9.2,6.8,83,71
+S15,Female,Computer Science,2,11.0,7.5,83,66
+S15,Female,Computer Science,3,10.6,6.1,83,64
+S15,Female,Computer Science,4,7.0,7.2,83,57
+S16,Female,Business,1,15.6,6.8,84,81
+S16,Female,Business,2,17.7,7.1,84,84
+S16,Female,Business,3,15.9,6.5,84,69
+S16,Female,Business,4,17.6,7.1,84,84
+S17,Female,Business,1,6.1,7.9,61,50
+S17,Female,Business,2,3.9,8.8,61,44
+S17,Female,Business,3,5.8,7.7,61,60
+S17,Female,Business,4,7.6,7.4,61,59
+S18,Male,Engineering,1,15.6,8.2,68,67
+S18,Male,Engineering,2,18.5,7.9,68,73
+S18,Male,Engineering,3,18.6,8.4,68,88
+S18,Male,Engineering,4,20.7,8.6,68,84
+S19,Male,Computer Science,1,9.4,8.3,90,73
+S19,Male,Computer Science,2,9.9,8.2,90,71
+S19,Male,Computer Science,3,11.7,8.1,90,74
+S19,Male,Computer Science,4,8.7,7.8,90,74
+S20,Male,Engineering,1,9.7,7.8,88,57
+S20,Male,Engineering,2,15.3,8.2,88,84
+S20,Male,Engineering,3,12.6,8.3,88,75
+S20,Male,Engineering,4,13.4,7.7,88,72
+S21,Female,Business,1,13.3,5.6,76,68
+S21,Female,Business,2,15.8,6.0,76,75
+S21,Female,Business,3,20.3,6.4,76,100
+S21,Female,Business,4,18.3,6.1,76,89
+S22,Female,Computer Science,1,13.1,7.5,65,58
+S22,Female,Computer Science,2,10.5,7.3,65,65
+S22,Female,Computer Science,3,8.6,6.5,65,68
+S22,Female,Computer Science,4,9.9,7.8,65,80
+S23,Male,Engineering,1,16.9,6.7,67,75
+S23,Male,Engineering,2,15.8,6.8,67,72
+S23,Male,Engineering,3,14.5,6.9,67,78
+S23,Male,Engineering,4,17.7,6.7,67,83
+S24,Male,Engineering,1,14.0,6.1,76,74
+S24,Male,Engineering,2,16.7,6.4,76,68
+S24,Male,Engineering,3,16.5,5.8,76,76
+S24,Male,Engineering,4,18.5,6.2,76,85
+S25,Male,Business,1,8.3,8.3,95,58
+S25,Male,Business,2,7.5,8.8,95,58
+S25,Male,Business,3,8.3,8.2,95,66
+S25,Male,Business,4,12.6,8.2,95,71
+S26,Male,Computer Science,1,8.3,7.1,60,55
+S26,Male,Computer Science,2,10.2,6.8,60,64
+S26,Male,Computer Science,3,10.7,7.0,60,65
+S26,Male,Computer Science,4,11.7,7.1,60,71
+S27,Female,Computer Science,1,12.3,5.4,86,60
+S27,Female,Computer Science,2,12.4,5.8,86,77
+S27,Female,Computer Science,3,13.9,5.4,86,70
+S27,Female,Computer Science,4,17.3,5.7,86,94
+S28,Female,Engineering,1,15.2,6.1,83,69
+S28,Female,Engineering,2,13.3,6.0,83,56
+S28,Female,Engineering,3,15.9,6.1,83,86
+S28,Female,Engineering,4,17.5,6.6,83,81
+S29,Male,Engineering,1,5.5,8.1,70,56
+S29,Male,Engineering,2,9.1,8.5,70,61
+S29,Male,Engineering,3,6.1,7.4,70,52
+S29,Male,Engineering,4,4.4,8.2,70,54
+S30,Female,Computer Science,1,13.5,6.5,99,68
+S30,Female,Computer Science,2,15.9,6.5,99,76
+S30,Female,Computer Science,3,15.8,6.3,99,88
+S30,Female,Computer Science,4,17.7,6.4,99,86

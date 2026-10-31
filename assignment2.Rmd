@@ -1,0 +1,258 @@
+---
+title: "Exploring ggplot2 Geoms with Student Performance Data"
+author: "NGABO Prince"
+date: "2026-10-31"
+output:
+  html_document:
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
+                      fig.width = 7, fig.height = 4.5)
+```
+
+
+```{r load}
+library(ggplot2)
+
+students <- read.csv("student_scores.csv")
+
+head(students)
+str(students)
+summary(students)
+```
+
+Some plots need one row per student instead of one row per test, so we also keep only the first test:
+
+```{r one-row-per-student}
+students_t1 <- subset(students, test_number == 1)
+nrow(students_t1)
+```
+
+---
+
+# 1. geom_bar()
+
+- `geom_bar()`
+- Draws a bar chart where the bar height is the **count** of rows in each category.
+- Counting how many students are in each program, split by gender.
+
+```{r geom-bar}
+ggplot(students_t1, aes(x = program, fill = gender)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Number of Students per Program by Gender",
+       x = "Program", y = "Number of Students")
+```
+
+---
+
+# 2. geom_boxplot()
+
+- `geom_boxplot()`
+- Shows the distribution of a numeric variable with the median, quartiles (box), whiskers, and outliers.
+- Comparing test scores across the three programs.
+
+```{r geom-boxplot}
+ggplot(students, aes(x = program, y = score, fill = program)) +
+  geom_boxplot() +
+  labs(title = "Test Scores by Program",
+       x = "Program", y = "Score")
+```
+
+---
+
+# 3. geom_density()
+
+- `geom_density()`
+- Draws a smooth curve showing the distribution of a numeric variable.
+- Comparing how many hours of sleep female and male students get.
+
+```{r geom-density}
+ggplot(students, aes(x = sleep_hours, fill = gender)) +
+  geom_density(alpha = 0.4) +
+  labs(title = "Distribution of Sleep Hours by Gender",
+       x = "Sleep Hours per Night", y = "Density")
+```
+
+---
+
+# 4. geom_histogram()
+
+- `geom_histogram()`
+- Groups a numeric variable into bins and draws bars for how many values fall in each bin.
+- Looking at how all the test scores are distributed.
+
+```{r geom-histogram}
+ggplot(students, aes(x = score)) +
+  geom_histogram(binwidth = 5, fill = "purple", color = "white") +
+  labs(title = "Histogram of Test Scores",
+       x = "Score", y = "Frequency")
+```
+
+---
+
+# 5. geom_hline()
+
+- `geom_hline()`
+- Adds a **horizontal** reference line at a given y value.
+- Plotting every score per test and drawing the pass mark (50) as a red line, so we can see who is above or below it.
+
+```{r geom-hline}
+ggplot(students, aes(x = factor(test_number), y = score)) +
+  geom_point(color = "gray30") +
+  geom_hline(yintercept = 50, color = "red", linetype = "dashed", linewidth = 1) +
+  labs(title = "Scores per Test with Pass Mark (red line = 50)",
+       x = "Test Number", y = "Score")
+```
+
+---
+
+# 6. geom_jitter()
+
+- `geom_jitter()`
+- A scatter plot with a small random shift added to each point so that overlapping points become visible.
+- Showing every individual score for each gender without the points stacking on top of each other.
+
+```{r geom-jitter}
+ggplot(students, aes(x = gender, y = score, color = gender)) +
+  geom_jitter(width = 0.2, height = 0, size = 2, alpha = 0.7) +
+  labs(title = "Individual Scores by Gender (jittered)",
+       x = "Gender", y = "Score")
+```
+
+---
+
+# 7. geom_line()
+
+- `geom_line()`
+- Connects points with lines in order of the x variable, which shows trends over time or sequence.
+- Calculating the average score per test for each program and showing how it changes from test 1 to test 4.
+
+```{r geom-line}
+avg_by_test <- aggregate(score ~ test_number + program, data = students, FUN = mean)
+
+ggplot(avg_by_test, aes(x = test_number, y = score, color = program)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  labs(title = "Average Score Across Tests by Program",
+       x = "Test Number", y = "Average Score")
+```
+
+---
+
+# 8. geom_point()
+
+- `geom_point()`
+- Creates a scatter plot with one point per row.
+- Exploring the relationship between weekly study hours and test score.
+
+```{r geom-point}
+ggplot(students, aes(x = study_hours, y = score, color = program)) +
+  geom_point(size = 2) +
+  labs(title = "Study Hours vs Score",
+       x = "Study Hours per Week", y = "Score")
+```
+
+---
+
+# 9. geom_rug()
+
+- `geom_rug()`
+- Adds small tick marks along the axes showing where each data value lies.
+- Adding rug marks to the attendance vs score plot to show where attendance and score values are concentrated.
+
+```{r geom-rug}
+ggplot(students, aes(x = attendance_pct, y = score)) +
+  geom_point(color = "darkorange") +
+  geom_rug(alpha = 0.5) +
+  labs(title = "Attendance vs Score with Rug Marks",
+       x = "Attendance (%)", y = "Score")
+```
+
+---
+
+# 10. geom_smooth()
+
+- `geom_smooth()`
+- Adds a fitted trend line (linear with `method = "lm"`) with a shaded confidence band.
+- Checking whether students who study more hours get higher scores.
+
+```{r geom-smooth}
+ggplot(students, aes(x = study_hours, y = score)) +
+  geom_point(color = "gray50") +
+  geom_smooth(method = "lm", color = "darkgreen") +
+  labs(title = "Linear Trend: Study Hours vs Score",
+       x = "Study Hours per Week", y = "Score")
+```
+
+---
+
+# 11. geom_text()
+
+- `geom_text()`
+- Places text labels on a plot at given x/y positions.
+- Showing the average score of each program as a bar, with the exact value written on top.
+
+```{r geom-text}
+avg_by_program <- aggregate(score ~ program, data = students, FUN = mean)
+
+ggplot(avg_by_program, aes(x = program, y = score, fill = program)) +
+  geom_col() +
+  geom_text(aes(label = round(score, 1)), vjust = -0.5) +
+  ylim(0, 100) +
+  labs(title = "Average Score per Program",
+       x = "Program", y = "Average Score")
+```
+
+---
+
+# 12. geom_violin()
+
+- `geom_violin()`
+- Shows the shape of a distribution for each group; the wider the violin, the more values at that level.
+- Comparing the shape of study hours across the three programs.
+
+```{r geom-violin}
+ggplot(students, aes(x = program, y = study_hours, fill = program)) +
+  geom_violin(trim = FALSE) +
+  labs(title = "Study Hours Distribution by Program",
+       x = "Program", y = "Study Hours per Week")
+```
+
+---
+
+# 13. geom_vline()
+
+- `geom_vline()`
+- Adds a **vertical** reference line at a given x value.
+- Drawing a histogram of study hours and marking the average study hours with a vertical line.
+
+```{r geom-vline}
+avg_study <- mean(students$study_hours)
+
+ggplot(students, aes(x = study_hours)) +
+  geom_histogram(binwidth = 2, fill = "skyblue", color = "white") +
+  geom_vline(xintercept = avg_study, color = "red", linewidth = 1, linetype = "dashed") +
+  labs(title = "Study Hours with Average (red line)",
+       x = "Study Hours per Week", y = "Frequency")
+```
+
+---
+
+# Summary
+
+| Function | What we showed |
+|---|---|
+| `geom_bar()` | Students per program and gender |
+| `geom_boxplot()` | Scores by program |
+| `geom_density()` | Sleep hours by gender |
+| `geom_histogram()` | Distribution of scores |
+| `geom_hline()` | Pass mark line on scores |
+| `geom_jitter()` | Individual scores by gender |
+| `geom_line()` | Average score across tests |
+| `geom_point()` | Study hours vs score |
+| `geom_rug()` | Attendance and score values on the axes |
+| `geom_smooth()` | Trend between study hours and score |
+| `geom_text()` | Average score labels on bars |
+| `geom_violin()` | Study hours by program |
+| `geom_vline()` | Average study hours line |
