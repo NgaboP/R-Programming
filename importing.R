@@ -1,9 +1,8 @@
 library(DBI)
 library(RMariaDB)
-library(dplyr)
-library(ggplot2)
 
-#Import data from MySQL (DBMS)
+
+# Import data from MySQL (DBMS)
 #------------------------
 
 con <- dbConnect(
@@ -30,7 +29,7 @@ head(courses)
 head(enrollments)
 
 
-#check Column names
+# check Column names
 names(students)
 names(courses)
 names(enrollments)
@@ -41,7 +40,7 @@ str(students)
 str(courses)
 str(enrollments)
 
-#Importing data from Statistical package
+# Importing data from Statistical package
 #---------------------------------------
 
 # Load the datasets package
@@ -64,7 +63,3 @@ summary(iris)
 
 # Number of rows and columns
 dim(iris)
-
-
-#Testing GitHub connection
-#------------------------
