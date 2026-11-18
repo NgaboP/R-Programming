@@ -1,0 +1,381 @@
+---
+title: "Linear Regression - My Practice"
+subtitle: "Class work and practice at home"
+author: "Personal practice"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+    code_folding: show
+    df_print: paged
+---
+
+# About this practice
+
+I am using this file to practise linear regression in R. I used a small sample dataset to understand simple regression, multiple regression, prediction and diagnostic plots.
+
+The data in this exercise is created for practice. It is not real student data.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  comment = "#>"
+)
+```
+
+# 1. Packages
+
+I use `ggplot2` for graphs. Most of the regression functions are already available in base R.
+
+```{r packages}
+if (!"ggplot2" %in% rownames(installed.packages())) {
+  install.packages("ggplot2")
+}
+library(ggplot2)
+```
+
+# 2. Prepare the practice data
+
+`Marks` is the outcome I want to explain. `Study_Hours` and `Attendance` are possible predictors.
+
+```{r prepare-data}
+regression_data <- data.frame(
+  Student = paste0("Student", 1:12),
+  Study_Hours = c(1, 2, 2.5, 3, 4, 4.5, 5, 6, 6.5, 7, 8, 9),
+  Attendance = c(55, 60, 62, 65, 70, 72, 75, 80, 82, 85, 90, 95),
+  Marks = c(42, 46, 50, 53, 58, 63, 65, 70, 74, 77, 83, 90)
+)
+
+regression_data
+head(regression_data)
+str(regression_data)
+summary(regression_data)
+
+# Check missing values in each column.
+colSums(is.na(regression_data))
+```
+
+# 3. Explore the variables
+
+I check the distributions and relationships before fitting a model.
+
+```{r explore-numeric}
+summary(regression_data[c("Study_Hours", "Attendance", "Marks")])
+```
+
+## 3.1 Study hours and marks
+
+```{r study-hours-plot, fig.width=7, fig.height=4}
+ggplot(regression_data, aes(x = Study_Hours, y = Marks)) +
+  geom_point(size = 3) +
+  labs(
+    title = "Study Hours and Marks",
+    x = "Study Hours",
+    y = "Marks"
+  )
+```
+
+## 3.2 Attendance and marks
+
+```{r attendance-plot, fig.width=7, fig.height=4}
+ggplot(regression_data, aes(x = Attendance, y = Marks)) +
+  geom_point(size = 3) +
+  labs(
+    title = "Attendance and Marks",
+    x = "Attendance (%)",
+    y = "Marks"
+  )
+```
+
+# 4. Correlation
+
+Correlation measures the direction and strength of a linear relationship between two numeric variables. It ranges from -1 to +1.
+
+- Positive correlation: the variables tend to increase together.
+- Negative correlation: one tends to decrease as the other increases.
+- Correlation near zero: little linear association.
+
+Correlation does not prove that one variable causes another.
+
+```{r correlation}
+cor(
+  regression_data$Study_Hours,
+  regression_data$Marks,
+  method = "pearson"
+)
+
+# Correlations among all numeric variables.
+cor(regression_data[c("Study_Hours", "Attendance", "Marks")])
+```
+
+# 5. Simple linear regression
+
+Simple linear regression uses one predictor. Here I predict Marks using Study_Hours.
+
+The formula `Marks ~ Study_Hours` means:
+
+- `Marks` is the response variable (Y).
+- `Study_Hours` is the predictor variable (X).
+
+```{r simple-model}
+simple_model <- lm(
+  Marks ~ Study_Hours,
+  data = regression_data
+)
+
+summary(simple_model)
+```
+
+## 5.1 Understanding the coefficients
+
+The intercept is the estimated mark when study hours are zero. The slope estimates the change in marks for one additional study hour, according to this model.
+
+```{r simple-coefficients}
+coef(simple_model)
+```
+
+I also check the fitted values and residuals. A residual is the observed value minus the fitted value.
+
+```{r fitted-residuals}
+regression_data$Fitted_Marks <- fitted(simple_model)
+regression_data$Residuals <- residuals(simple_model)
+
+regression_data[, c("Student", "Marks", "Fitted_Marks", "Residuals")]
+```
+
+## 5.2 Regression graph
+
+The points show the observed marks. The line is the fitted linear relationship.
+
+```{r simple-regression-graph, fig.width=7, fig.height=4}
+ggplot(regression_data, aes(x = Study_Hours, y = Marks)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(
+    title = "Simple Linear Regression",
+    x = "Study Hours",
+    y = "Marks"
+  )
+```
+
+# 6. Making predictions
+
+I use `predict()` to estimate marks for new study-hour values. The new data must use the same predictor name as the model.
+
+```{r simple-prediction}
+new_students <- data.frame(
+  Study_Hours = c(3, 5, 7, 8)
+)
+
+predicted_marks <- predict(
+  simple_model,
+  newdata = new_students
+)
+
+data.frame(
+  Study_Hours = new_students$Study_Hours,
+  Predicted_Marks = as.numeric(predicted_marks)
+)
+```
+
+I can request a confidence interval for the estimated mean response.
+
+```{r confidence-interval}
+predict(
+  simple_model,
+  newdata = new_students,
+  interval = "confidence"
+)
+```
+
+A prediction interval is wider because it estimates a range for an individual future observation.
+
+```{r prediction-interval}
+predict(
+  simple_model,
+  newdata = new_students,
+  interval = "prediction"
+)
+```
+
+# 7. Multiple linear regression
+
+Multiple regression uses two or more predictors. Here I use Study_Hours and Attendance to predict Marks.
+
+```{r multiple-model}
+multiple_model <- lm(
+  Marks ~ Study_Hours + Attendance,
+  data = regression_data
+)
+
+summary(multiple_model)
+coef(multiple_model)
+```
+
+I compare the R-squared values, but I do not choose a model using R-squared alone. I also need to consider assumptions, data quality, adjusted R-squared and the purpose of the analysis.
+
+```{r compare-r-squared}
+simple_summary <- summary(simple_model)
+multiple_summary <- summary(multiple_model)
+
+data.frame(
+  Model = c("Simple regression", "Multiple regression"),
+  R_Squared = c(
+    simple_summary$r.squared,
+    multiple_summary$r.squared
+  ),
+  Adjusted_R_Squared = c(
+    simple_summary$adj.r.squared,
+    multiple_summary$adj.r.squared
+  ),
+  Residual_Standard_Error = c(
+    simple_summary$sigma,
+    multiple_summary$sigma
+  )
+)
+```
+
+# 8. Prediction with multiple regression
+
+For multiple regression, the new data must include all predictors used in the model.
+
+```{r multiple-prediction}
+new_data_multiple <- data.frame(
+  Study_Hours = c(4, 6, 8),
+  Attendance = c(70, 80, 90)
+)
+
+multiple_predictions <- predict(
+  multiple_model,
+  newdata = new_data_multiple
+)
+
+data.frame(
+  new_data_multiple,
+  Predicted_Marks = as.numeric(multiple_predictions)
+)
+```
+
+# 9. Main linear regression assumptions
+
+These are the four main assumptions I am reviewing.
+
+1. **Linearity:** the relationship between predictors and response should be reasonably linear.
+2. **Independence:** observations/errors should be independent. This depends on how the data was collected and ordered.
+3. **Homoscedasticity:** residuals should have roughly constant variance across fitted values.
+4. **Normality of residuals:** residuals should be approximately normally distributed for standard small-sample inference.
+
+Diagnostic plots help me look for warning signs. They do not prove that an assumption is satisfied.
+
+# 10. Diagnostic plots
+
+The four standard diagnostic plots from `plot(lm_model)` are:
+
+1. **Residuals vs Fitted:** checks linearity and whether residual spread is roughly constant.
+2. **Normal Q-Q:** checks whether residuals are approximately normal.
+3. **Scale-Location:** another check of constant residual spread.
+4. **Residuals vs Leverage:** helps identify observations that may have strong influence.
+
+```{r diagnostic-plots, fig.width=8, fig.height=7}
+par(mfrow = c(2, 2))
+plot(simple_model)
+par(mfrow = c(1, 1))
+```
+
+These plots do not prove independence. I also need to consider how the observations were collected.
+
+# 11. Checking residual normality
+
+I use a histogram and Q-Q plot to inspect the residual distribution.
+
+```{r residual-histogram, fig.width=7, fig.height=4}
+model_residuals <- residuals(simple_model)
+
+hist(
+  model_residuals,
+  main = "Histogram of Regression Residuals",
+  xlab = "Residuals",
+  col = "lightblue",
+  border = "white"
+)
+```
+
+```{r residual-qq, fig.width=7, fig.height=4}
+qqnorm(model_residuals)
+qqline(model_residuals, col = "red")
+```
+
+I can also run the Shapiro-Wilk test. Its null hypothesis is that the data are consistent with a normal distribution. I interpret the p-value together with the Q-Q plot, not by itself.
+
+```{r shapiro-test}
+shapiro.test(model_residuals)
+```
+
+# 12. Checking constant variance
+
+I plot residuals against fitted values. I look for a roughly even vertical spread around zero.
+
+```{r residuals-vs-fitted, fig.width=7, fig.height=4}
+plot(
+  fitted(simple_model),
+  residuals(simple_model),
+  main = "Residuals vs Fitted Values",
+  xlab = "Fitted Values",
+  ylab = "Residuals",
+  pch = 19
+)
+abline(h = 0, lty = 2, col = "red")
+```
+
+# 13. Checking influential observations
+
+Cook's distance helps identify observations that may strongly influence the fitted model. The reference line below is only a screening guide, not an automatic rule for deleting observations.
+
+```{r cooks-distance, fig.width=7, fig.height=4}
+cook_values <- cooks.distance(simple_model)
+cook_values
+
+plot(
+  cook_values,
+  type = "h",
+  main = "Cook's Distance",
+  xlab = "Observation",
+  ylab = "Cook's Distance"
+)
+
+abline(
+  h = 4 / nrow(regression_data),
+  lty = 2,
+  col = "red"
+)
+```
+
+# 14. Practice questions
+
+I will try these questions after reviewing the examples.
+
+1. Fit a simple model using Attendance to predict Marks.
+2. Explain the intercept and slope from the simple model.
+3. Use `predict()` to estimate marks for 5 study hours.
+4. Fit a multiple regression model using Study_Hours and Attendance.
+5. Explain R-squared and adjusted R-squared.
+6. What is the difference between a confidence interval and a prediction interval?
+7. Use `plot(simple_model)` and explain the four plots.
+8. What pattern in Residuals vs Fitted may suggest non-linearity or unequal variance?
+9. Why does correlation not prove causation?
+10. Explain why I should not automatically remove an observation just because Cook's distance is high.
+
+# My short summary
+
+- Simple linear regression uses one predictor.
+- Multiple linear regression uses two or more predictors.
+- `lm()` fits a linear regression model.
+- `summary()` displays the model results.
+- `coef()` extracts the estimated coefficients.
+- `predict()` makes predictions for new data.
+- Residuals are observed values minus fitted values.
+- Diagnostic plots help me check regression assumptions.

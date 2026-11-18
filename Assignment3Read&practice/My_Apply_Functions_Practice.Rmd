@@ -1,0 +1,332 @@
+---
+title: "Apply Functions - My Practice"
+subtitle: "Class work and practice at home"
+author: "Personal practice"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+    code_folding: show
+    df_print: paged
+---
+
+# About this practice
+
+I am using this file to practise the apply family in R. I used small examples to understand how each function works and how the results differ.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  comment = "#>"
+)
+```
+
+# 1. Getting started
+
+I first compared a normal `for` loop with a vector calculation. The apply family is useful when I need to apply a function repeatedly to rows, columns, lists or groups.
+
+```{r loop-comparison}
+values <- c(10, 20, 30, 40)
+
+loop_result <- numeric(length(values))
+
+for (i in seq_along(values)) {
+  loop_result[i] <- values[i] * 2
+}
+
+loop_result
+
+# Same calculation using vector operations.
+values * 2
+```
+
+# 2. apply()
+
+`apply()` is mainly used with matrices and arrays.
+
+- `X` is the matrix or array.
+- `MARGIN = 1` means rows.
+- `MARGIN = 2` means columns.
+- `FUN` is the function to apply.
+
+## 2.1 Create a marks matrix
+
+```{r create-matrix}
+marks_matrix <- matrix(
+  c(70, 80, 90,
+    60, 75, 85,
+    88, 92, 95),
+  nrow = 3,
+  byrow = TRUE
+)
+
+rownames(marks_matrix) <- c("Student1", "Student2", "Student3")
+colnames(marks_matrix) <- c("Math", "English", "Science")
+
+marks_matrix
+```
+
+## 2.2 Apply calculations to rows and columns
+
+I calculated each student's average and each subject's average. I also tried totals and maximum values.
+
+```{r apply-calculations}
+student_average <- apply(marks_matrix, 1, mean)
+subject_average <- apply(marks_matrix, 2, mean)
+
+student_average
+subject_average
+
+student_total <- apply(marks_matrix, 1, sum)
+subject_highest <- apply(marks_matrix, 2, max)
+
+student_total
+subject_highest
+```
+
+I also used my own small function to calculate the range of marks for each student.
+
+```{r apply-custom-function}
+student_range <- apply(
+  marks_matrix,
+  1,
+  function(x) max(x) - min(x)
+)
+
+student_range
+```
+
+# 3. lapply()
+
+`lapply()` applies a function to every element of a list. It always returns a list.
+
+```{r make-marks-list}
+marks_list <- list(
+  Class_A = c(65, 70, 80, 85),
+  Class_B = c(55, 60, 75, 90),
+  Class_C = c(72, 78, 82, 88)
+)
+
+marks_list
+```
+
+I used `lapply()` to calculate the average, highest mark and number of marks in each class.
+
+```{r lapply-examples}
+class_averages_list <- lapply(marks_list, mean)
+class_highest_list <- lapply(marks_list, max)
+class_counts <- lapply(marks_list, length)
+
+class_averages_list
+class_highest_list
+class_counts
+
+class(class_averages_list)
+```
+
+# 4. sapply()
+
+`sapply()` works like `lapply()`, but it tries to simplify the output into a vector or matrix when possible.
+
+```{r sapply-examples}
+class_averages_vector <- sapply(marks_list, mean)
+class_highest_vector <- sapply(marks_list, max)
+
+class_averages_vector
+class_highest_vector
+
+class(class_averages_vector)
+```
+
+**What I noticed:** `lapply()` returns a list, while `sapply()` may return a simpler object such as a vector.
+
+# 5. vapply()
+
+`vapply()` is similar to `sapply()`, but I specify the expected output type and length. `numeric(1)` means one numeric result for each list element.
+
+```{r vapply-examples}
+class_average_checked <- vapply(
+  marks_list,
+  mean,
+  FUN.VALUE = numeric(1)
+)
+
+class_average_checked
+
+# length() returns whole numbers, so I use integer(1).
+class_size_checked <- vapply(
+  marks_list,
+  length,
+  FUN.VALUE = integer(1)
+)
+
+class_size_checked
+```
+
+# 6. tapply()
+
+`tapply()` applies a function to groups. I created a small student data frame and calculated marks by gender and class.
+
+```{r create-student-data}
+student_data <- data.frame(
+  Student = c("Aline", "Eric", "Jean", "Diane",
+              "Peter", "Alice", "David", "Maya"),
+  Gender = c("Female", "Male", "Male", "Female",
+             "Male", "Female", "Male", "Female"),
+  Marks = c(75, 60, 88, 45, 92, 81, 69, 95),
+  Class = c("A", "A", "B", "A", "B", "B", "A", "B")
+)
+
+student_data
+```
+
+## 6.1 Average marks by gender
+
+```{r tapply-gender}
+average_by_gender <- tapply(
+  student_data$Marks,
+  student_data$Gender,
+  mean
+)
+
+average_by_gender
+```
+
+## 6.2 Highest marks and number of students by class
+
+```{r tapply-class}
+highest_by_class <- tapply(
+  student_data$Marks,
+  student_data$Class,
+  max
+)
+
+students_per_class <- tapply(
+  student_data$Student,
+  student_data$Class,
+  length
+)
+
+highest_by_class
+students_per_class
+```
+
+## 6.3 Grouping by two variables
+
+I can also group by both class and gender.
+
+```{r tapply-two-groups}
+average_by_class_gender <- with(
+  student_data,
+  tapply(Marks, list(Class, Gender), mean)
+)
+
+average_by_class_gender
+```
+
+# 7. mapply()
+
+`mapply()` applies a function to corresponding elements from two or more inputs. I used it to add matching values from two vectors.
+
+```{r mapply-vectors}
+first_numbers <- c(2, 4, 6, 8)
+second_numbers <- c(10, 20, 30, 40)
+
+added_numbers <- mapply(
+  FUN = sum,
+  first_numbers,
+  second_numbers
+)
+
+added_numbers
+```
+
+I also tried it with lists containing vectors. Each matching pair of list elements is passed to `sum()`.
+
+```{r mapply-lists}
+class_one <- list(c(10, 20), c(30, 40), c(50, 60))
+class_two <- list(c(1, 2), c(3, 4), c(5, 6))
+
+group_totals <- mapply(
+  FUN = sum,
+  class_one,
+  class_two
+)
+
+group_totals
+```
+
+# 8. Map()
+
+`Map()` is similar to `mapply()`, but it always returns a list. Its first argument is named `f`, so I use `f = sum` here.
+
+```{r map-example}
+map_result <- Map(
+  f = sum,
+  first_numbers,
+  second_numbers
+)
+
+map_result
+class(map_result)
+class(added_numbers)
+```
+
+# 9. Comparing the functions
+
+This table is my short reminder of what each function does.
+
+| Function | Main use | Result |
+|---|---|---|
+| `apply()` | Matrix or array rows/columns | Vector, list or array |
+| `lapply()` | Each list element | List |
+| `sapply()` | Each list element | Simplified where possible |
+| `vapply()` | Each list element with expected type | Specified output type |
+| `tapply()` | Values grouped by categories | Grouped result |
+| `mapply()` | Several inputs at the same time | Simplified where possible |
+| `Map()` | Several inputs at the same time | List |
+
+I compared the average calculation using `lapply()`, `sapply()` and `vapply()`.
+
+```{r compare-functions}
+compare_lapply <- lapply(marks_list, mean)
+compare_sapply <- sapply(marks_list, mean)
+compare_vapply <- vapply(marks_list, mean, numeric(1))
+
+compare_lapply
+compare_sapply
+compare_vapply
+
+class(compare_lapply)
+class(compare_sapply)
+class(compare_vapply)
+```
+
+# 10. Practice questions
+
+I will try these questions on my own after reviewing the examples.
+
+1. Create a 4 by 3 matrix. Use `apply()` to calculate the mean of each row.
+2. Use `apply()` to find the maximum value in each column.
+3. Create a list containing three vectors of test marks. Use `lapply()` to calculate the total for each vector.
+4. Use `sapply()` to calculate the average of each vector. Check the class of the result.
+5. Use `vapply()` to calculate the length of each vector. Set the expected result type correctly.
+6. Create a data frame with Department and Salary columns. Use `tapply()` to calculate average salary by department.
+7. Use `mapply()` to add two vectors element by element.
+8. Use `Map()` to repeat question 7 and compare the result.
+9. Explain the difference between `lapply()` and `sapply()`.
+10. Explain when you would use `apply()` instead of `tapply()`.
+
+# My short summary
+
+- `apply()` works on matrix or array margins.
+- `lapply()` returns a list.
+- `sapply()` tries to simplify the result.
+- `vapply()` lets me specify the expected result.
+- `tapply()` works with groups.
+- `mapply()` applies a function to multiple inputs.
+- `Map()` is similar to `mapply()` but returns a list.
